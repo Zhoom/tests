@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>offlineCount</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script>
+          $(function(){
+            var firstLogin = localStorage.getItem('firstLogin');
+
+            if(firstLogin != 1) {
+              fLogin();
+            }
+            else {
+              offlineEarns();
+            }
+
+            setInterval(function(){
+              //var coinPerSecond = parseInt(localStorage.getItem('upgradeCoinPerSec'));
+              save(0, 0);
+            }, 1000);
+
+            updateButton();
+
+            $('#upgrade1').click(function(){
+              var upgradeCoinPerSec = parseInt(localStorage.getItem('upgradeCoinPerSec')),
+                  upgradeCoinPerSecCost = parseInt(localStorage.getItem('upgradeCoinPerSecCost')),
+                  coinOnAcc = parseInt(localStorage.getItem('coin'));
+
+              if(coinOnAcc > upgradeCoinPerSecCost){
+                save(0, upgradeCoinPerSecCost);
+
+                localStorage.setItem('upgradeCoinPerSec', upgradeCoinPerSec += 1);
+                localStorage.setItem('upgradeCoinPerSecCost', upgradeCoinPerSecCost *= 1.2);
+
+                updateButton();
+              }
+              else{
+                alert("QUbits insuficientes!");
+              }
+            })
+          })
+
+          //First Login
+          function fLogin(){
+              localStorage.setItem('firstLogin', 1);
+              localStorage.setItem('coin', 0);
+              localStorage.setItem('upgradeCoinPerSec', 5);
+              localStorage.setItem('upgradeCoinPerSecCost', 100);
+              save(0, 0);
+          }
+
+          function save(coinReceived, coinRemoved){
+            var lastOnline = new Date().getTime(), //lastOnline A.K.A last savegame date
+                coinOnAcc = parseInt(localStorage.getItem('coin'));
+
+            //if(coinOnAcc == "NaN" || coinOnAcc == "undefined") coinOnAcc = 0;
+
+            coinOnAcc += coinReceived;
+            coinOnAcc -= coinRemoved;
+            localStorage.setItem('lastOnline', lastOnline);
+            localStorage.setItem('coin', coinOnAcc);
+
+            updateCoin(coinOnAcc);
+          }
+
+          function updateCoin(coin){
+            $('#coin').text("QUbits: " + coin);
+          }
+
+          function offlineEarns(){
+            var backOnline = new Date().getTime(),
+                lastOnline = localStorage.getItem('lastOnline');
+
+            if(backOnline > lastOnline){
+
+              var timeDisconected = (backOnline - lastOnline) / 1000,
+                  coinPerSecond = parseInt(localStorage.getItem('upgradeCoinPerSec')),
+                  secondsDisconected = parseInt(timeDisconected),
+                  coinOffline = secondsDisconected * coinPerSecond;
+
+              alert("Você recebeu " + coinOffline + " QUbits por ter ficado " + secondsDisconected + " segundos fora.")
+
+              save(coinOffline, 0);
+            }
+          }
+
+          function updateButton(){
+            var upgradeCoinPerSec = parseInt(localStorage.getItem('upgradeCoinPerSec')),
+                upgradeCoinPerSecCost = parseInt(localStorage.getItem('upgradeCoinPerSecCost'));
+            $('#upgrade1').val('Buy +Lv. Upgrade for ' + upgradeCoinPerSecCost + ' QUbits');
+            $('#someMessage').text('Current ' + upgradeCoinPerSec + ' QUbit p/Sec : ');
+          }
+
+        </script>
+    </head>
+    <body>
+      <span id="coin"></span><br><br>
+      <span>QUbits are earned only when page are closed</span><br><br>
+      <span id="someMessage"></span><br>
+      <input type="button" id="upgrade1"></input>
+    </body>
+</html>
