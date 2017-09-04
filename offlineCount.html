@@ -17,16 +17,16 @@
             }
 
             setInterval(function(){
-              //var coinPerSecond = parseInt(localStorage.getItem('upgradeCoinPerSec'));
-              save(0, 0);
+              var coinPerSecond = Number(localStorage.getItem('upgradeCoinPerSec'));
+              save(coinPerSecond, 0);
             }, 1000);
 
             updateButton();
 
             $('#upgrade1').click(function(){
-              var upgradeCoinPerSec = parseInt(localStorage.getItem('upgradeCoinPerSec')),
-                  upgradeCoinPerSecCost = parseInt(localStorage.getItem('upgradeCoinPerSecCost')),
-                  coinOnAcc = parseInt(localStorage.getItem('coin'));
+              var upgradeCoinPerSec = Number(localStorage.getItem('upgradeCoinPerSec')),
+                  upgradeCoinPerSecCost = Number(localStorage.getItem('upgradeCoinPerSecCost')),
+                  coinOnAcc = Number(localStorage.getItem('coin'));
 
               if(coinOnAcc > upgradeCoinPerSecCost){
                 save(0, upgradeCoinPerSecCost);
@@ -37,7 +37,7 @@
                 updateButton();
               }
               else{
-                alert("QUbits insuficientes!");
+                alert("Insufficient QUbits!");
               }
             })
           })
@@ -53,7 +53,7 @@
 
           function save(coinReceived, coinRemoved){
             var lastOnline = new Date().getTime(), //lastOnline A.K.A last savegame date
-                coinOnAcc = parseInt(localStorage.getItem('coin'));
+                coinOnAcc = Number(localStorage.getItem('coin'));
 
             //if(coinOnAcc == "NaN" || coinOnAcc == "undefined") coinOnAcc = 0;
 
@@ -66,7 +66,7 @@
           }
 
           function updateCoin(coin){
-            $('#coin').text("QUbits: " + coin);
+            $('#coin').text("QUbits: " + coin.toFixed(0));
           }
 
           function offlineEarns(){
@@ -76,28 +76,28 @@
             if(backOnline > lastOnline){
 
               var timeDisconected = (backOnline - lastOnline) / 1000,
-                  coinPerSecond = parseInt(localStorage.getItem('upgradeCoinPerSec')),
-                  secondsDisconected = parseInt(timeDisconected),
+                  coinPerSecond = Number(localStorage.getItem('upgradeCoinPerSec')),
+                  secondsDisconected = Number(timeDisconected),
                   coinOffline = secondsDisconected * coinPerSecond;
 
-              alert("Você recebeu " + coinOffline + " QUbits por ter ficado " + secondsDisconected + " segundos fora.")
+              alert("You received " + coinOffline.toFixed(0) + " QUbits for being " + secondsDisconected.toFixed(1) + " seconds offline.")
 
               save(coinOffline, 0);
             }
           }
 
           function updateButton(){
-            var upgradeCoinPerSec = parseInt(localStorage.getItem('upgradeCoinPerSec')),
-                upgradeCoinPerSecCost = parseInt(localStorage.getItem('upgradeCoinPerSecCost'));
-            $('#upgrade1').val('Buy +Lv. Upgrade for ' + upgradeCoinPerSecCost + ' QUbits');
-            $('#someMessage').text('Current ' + upgradeCoinPerSec + ' QUbit p/Sec : ');
+            var upgradeCoinPerSec = Number(localStorage.getItem('upgradeCoinPerSec')),
+                upgradeCoinPerSecCost = Number(localStorage.getItem('upgradeCoinPerSecCost'));
+            $('#upgrade1').val('Buy +Lv. Upgrade for ' + upgradeCoinPerSecCost.toFixed(0) + ' QUbits');
+            $('#someMessage').text('Current ' + upgradeCoinPerSec.toFixed(0) + ' QUbit p/Sec : ');
           }
 
         </script>
     </head>
     <body>
+      <span>Just a test to earn coins while game are closed</span><br><br>
       <span id="coin"></span><br><br>
-      <span>QUbits are earned only when page are closed</span><br><br>
       <span id="someMessage"></span><br>
       <input type="button" id="upgrade1"></input>
     </body>
